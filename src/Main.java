@@ -1,8 +1,9 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
-    public class ListNode {
+    public static class ListNode {
         int val;
         ListNode next = null;
 
@@ -302,15 +303,185 @@ public class Main {
             else
                 return 1+Math.max(TreeDepth(root.left),TreeDepth(root.right));
         }
+
+        /**
+         * 平衡二叉树
+         * @param root
+         * @return
+         */
+        public boolean IsBalanced_Solution(TreeNode root) {
+            if(root==null||(root.left==null&&root.right==null))
+                return true;
+            int leftDepth=TreeDepth(root.left);
+            int rightDepth=TreeDepth(root.right);
+            if (leftDepth==rightDepth||leftDepth-rightDepth==1||rightDepth-leftDepth==1)
+                return true;
+            else
+                return false;
+        }
+
+        /**
+         * 数组中只出现一次的数字
+         * @param array
+         * @param num1
+         * @param num2
+         */
+        public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
+            Set<Integer> set=new HashSet<>();
+            for(int i:array){
+                if (set.contains(i))
+                    set.remove(i);
+                else
+                    set.add(i);
+            }
+            Iterator<Integer> iterator=set.iterator();
+            num1[0]=iterator.next();
+            num2[0]=iterator.next();
+            return;
+        }
+
+        /**
+         * 和为S的连续正数序列
+         * @param sum
+         * @return
+         */
+        public ArrayList<ArrayList<Integer> > FindContinuousSequence(int sum) {
+            ArrayList<ArrayList<Integer>> res=new ArrayList<>();
+            if (sum<3)
+                return res;
+            int plow=1,phigh=2;
+            while (phigh>plow){
+                int cur=(phigh+plow)*(phigh-plow+1)/2;
+                if (cur==sum){
+                    ArrayList<Integer> seq=new ArrayList<>();
+                    for (int i=plow;i<=phigh;i++)
+                        seq.add(i);
+                    res.add(seq);
+                    plow++;
+                }else if (cur>sum)
+                    plow++;
+                else
+                    phigh++;
+            }
+            return res;
+        }
+        /**
+         * 和为S的两个数字
+         * @param array
+         * @param sum
+         * @return
+         */
+        public ArrayList<Integer> FindNumbersWithSum(int [] array,int sum) {
+            Set<Integer> set=new HashSet<>();
+            int product=Integer.MAX_VALUE;
+            ArrayList<Integer> res=new ArrayList<>();
+            for (int i:array){
+                if (set.contains(sum-i)&&(i*(sum-i)<product)){
+                    res.clear();
+                    res.add(sum-i);
+                    res.add(i);
+                    product=i*(sum-i);
+                }else
+                    set.add(i);
+            }
+            return res;
+        }
+
+        /**
+         * 左旋转字符串
+         * @param str
+         * @param n
+         * @return
+         */
+        public String LeftRotateString(String str,int n) {
+            return n>str.length()?"":str.substring(n).concat(str.substring(0,n));
+        }
+
+        /**
+         * 翻转单词顺序列
+         * @param str
+         * @return
+         */
+        public String ReverseSentence(String str) {
+            if (str==null||str.length()==0)
+                return "";
+            Stack<String> stack=new Stack<>();
+            String[] words=str.split(" ");
+            if (words.length==0)
+                return str;
+            for (String s:words)
+                stack.push(s);
+            String res="";
+            while (!stack.empty()){
+                res=res.concat(stack.pop()+" ");
+            }
+            return res.substring(0,res.length()-1);
+        }
+
+        /**
+         * 扑克牌顺子
+         * @param numbers
+         * @return
+         */
+        public boolean isContinuous(int [] numbers) {
+            if (numbers.length!=5)
+                return false;
+            Arrays.sort(numbers);
+            int num0=0;
+            int pre=-1;
+            for (int i=0;i<numbers.length;i++){
+                if (numbers[i]==0)
+                    num0++;
+                else if (pre==-1)
+                    pre=numbers[i];
+                else if (pre==numbers[i])
+                    return false;
+                else if (numbers[i]==pre+1)
+                    pre=numbers[i];
+                else if (num0!=0&&(numbers[i]<=(pre+1+num0))) {
+                    num0--;
+                    pre=numbers[i];
+                }
+                else
+                    return false;
+            }
+            return true;
+        }
+
+        /**
+         * 圆圈中最后剩下的数
+         * @param n
+         * @param m
+         * @return
+         */
+        public int LastRemaining_Solution(int n, int m) {
+            if (n==0||m==0)
+                return -1;
+            ListNode head=new ListNode(0);
+            ListNode pHead=head;
+            while (head.val<n-1){
+                head.next=new ListNode(head.val+1);
+                head=head.next;
+            }
+            head.next=pHead;
+            while (pHead.next.val!=pHead.val){
+                for (int i=0;i<m-2;i++)
+                    pHead=pHead.next;
+                pHead.next=pHead.next.next;
+                pHead=pHead.next;
+            }
+
+            return pHead.val;
+        }
     }
+
+
 
 
 
     public static void main(String[] args) {
         Solution solution=new Solution();
-        TreeNode root =new TreeNode(1);
-        root.right=new TreeNode(2);
-        root.right.right=new TreeNode(3);
-        System.out.println(solution.TreeDepth(root));
+
+        System.out.println(solution.LastRemaining_Solution(5,2));
     }
 }
